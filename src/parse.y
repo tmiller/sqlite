@@ -500,7 +500,7 @@ distinct(A) ::= .           {A = 0;}
 %destructor sclp {sqlite3ExprListDelete(pParse->db, $$);}
 sclp(A) ::= selcollist(X) COMMA.             {A = X;}
 sclp(A) ::= .                                {A = 0;}
-selcollist(A) ::= sclp(P) expr(X) as(Y).     {
+selcollist(A) ::= sclp(P) sa(Y) expr(X).     {
    A = sqlite3ExprListAppend(pParse, P, X.pExpr);
    if( Y.n>0 ) sqlite3ExprListSetName(pParse, A, &Y, 1);
    sqlite3ExprListSetSpan(pParse,A,&X);
@@ -524,6 +524,8 @@ as(X) ::= AS nm(Y).    {X = Y;}
 as(X) ::= ids(Y).      {X = Y;}
 as(X) ::= .            {X.n = 0;}
 
+%type sa {Token}
+sa(X) ::= nm(Y) AS.    {X = Y;}
 
 %type seltablist {SrcList*}
 %destructor seltablist {sqlite3SrcListDelete(pParse->db, $$);}
